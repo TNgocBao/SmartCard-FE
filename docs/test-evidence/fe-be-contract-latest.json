@@ -1,0 +1,122 @@
+{
+  "frontend": "production Swing window/controllers, IdpApi, SmartCardAuthenticationService and CardClient",
+  "cases": [
+    {
+      "case": "FE password login reaches real BE and creates admin session",
+      "passed": true
+    },
+    {
+      "case": "FE enrollment obtains real AAL2 admin token",
+      "passed": true
+    },
+    {
+      "case": "FE account creation executes BE transaction",
+      "passed": true
+    },
+    {
+      "case": "Production CardClient reads simulated APDU public key and identity",
+      "passed": true
+    },
+    {
+      "case": "Wrong card PIN prevents FE from receiving a token",
+      "passed": true
+    },
+    {
+      "case": "PIN char array is cleared after a failed card attempt",
+      "passed": true
+    },
+    {
+      "case": "FE APDU signature is verified by real BE",
+      "passed": true
+    },
+    {
+      "case": "PIN char array is cleared after successful authentication",
+      "passed": true
+    },
+    {
+      "case": "PIN field never travels across the HTTP API",
+      "passed": true
+    },
+    {
+      "case": "Swing controller completes card login against real BE",
+      "passed": true
+    },
+    {
+      "case": "Swing member view disables every admin action",
+      "passed": true
+    },
+    {
+      "case": "Swing clears the PIN input after submit",
+      "passed": true
+    },
+    {
+      "case": "Swing task runner releases busy overlay after card login",
+      "passed": true
+    },
+    {
+      "case": "Swing dashboard renders real BE counts",
+      "passed": true
+    },
+    {
+      "case": "Swing admin view enables its management controls",
+      "passed": true
+    },
+    {
+      "case": "Swing account table renders real BE account rows",
+      "passed": true
+    },
+    {
+      "case": "Swing activity contains neither PIN nor bearer tokens",
+      "passed": true
+    },
+    {
+      "case": "Real FE refresh recovers from BE bearer rejection",
+      "passed": true
+    },
+    {
+      "case": "Refresh request carried no expired bearer header",
+      "passed": true
+    },
+    {
+      "case": "Real BE rejects management access from member FE",
+      "passed": true
+    },
+    {
+      "case": "FE card service preserves MFA challenge rather than treating it as a login",
+      "passed": true
+    },
+    {
+      "case": "FE completes card plus TOTP against real BE",
+      "passed": true
+    },
+    {
+      "case": "Lock invalidates the real FE session and refresh state",
+      "passed": true
+    },
+    {
+      "case": "Unlock allows a fresh card challenge",
+      "passed": true
+    },
+    {
+      "case": "APDU private key was never exposed to an API",
+      "passed": true
+    },
+    {
+      "case": "FE reads active plus NEXT public JWK",
+      "passed": true
+    },
+    {
+      "case": "FE stays authenticated through signing-key overlap",
+      "passed": true
+    },
+    {
+      "case": "FE receives domain rejection when revoking active signing key",
+      "passed": true
+    }
+  ],
+  "simulation": "HTTP transport via MockMvc; software APDU card fixture; NOT Oracle Simulator or physical card",
+  "recordedAt": "2026-11-19T16:55:49.239084900Z",
+  "backend": "real Spring Security/controllers/services/repositories and H2",
+  "frontendSourceSha256": "7534b1bda109cadc89bfdf846f6a385d69c4c5bbefde5240c5f46991c95bbfb6",
+  "backendSourceSha256": "78875f775a1324e5ef08805aef1c392de23def1b949e76881c7df90bd3b4f9f1"
+}

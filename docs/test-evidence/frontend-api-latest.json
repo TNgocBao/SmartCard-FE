@@ -1,0 +1,107 @@
+{
+  "recordedAt": "2026-11-20T14:23:41.248266400Z",
+  "transport": "injected deterministic transport; no network",
+  "cases": [
+    {
+      "case": "Refresh request omits expired Authorization header",
+      "passed": true
+    },
+    {
+      "case": "Expired access refreshes and retries successfully",
+      "passed": true
+    },
+    {
+      "case": "Exactly one refresh and one retry",
+      "passed": true
+    },
+    {
+      "case": "Business 401 is not replayed or refreshed",
+      "passed": true
+    },
+    {
+      "case": "Timed-out mutation is never automatically resubmitted",
+      "passed": true
+    },
+    {
+      "case": "Malformed server errors reveal no response body",
+      "passed": true
+    },
+    {
+      "case": "Non-local HTTP is rejected",
+      "passed": true
+    },
+    {
+      "case": "Credentials embedded in base URL are rejected",
+      "passed": true
+    },
+    {
+      "case": "Authority-changing paths are rejected",
+      "passed": true
+    },
+    {
+      "case": "Concurrent expired requests both recover",
+      "passed": true
+    },
+    {
+      "case": "Concurrent requests rotate refresh only once",
+      "passed": true
+    },
+    {
+      "case": "Sign-out during refresh cannot restore the old session",
+      "passed": true
+    },
+    {
+      "case": "Session switch prevents mutation retry",
+      "passed": true
+    },
+    {
+      "case": "Oversized response is cancelled while receiving",
+      "passed": true
+    },
+    {
+      "case": "UTF-8 response survives split byte buffers",
+      "passed": true
+    },
+    {
+      "case": "Refresh with malformed JSON clears uncertain session without replay",
+      "passed": true
+    },
+    {
+      "case": "Refresh with missing token pair clears uncertain session without replay",
+      "passed": true
+    },
+    {
+      "case": "Refresh with duplicate JSON field clears uncertain session without replay",
+      "passed": true
+    },
+    {
+      "case": "Refresh with trailing JSON value clears uncertain session without replay",
+      "passed": true
+    },
+    {
+      "case": "Lost refresh response clears tokens and never replays mutation",
+      "passed": true
+    },
+    {
+      "case": "Bearer rejection after refresh clears session with one bounded retry",
+      "passed": true
+    },
+    {
+      "case": "Failure from an old refresh cannot clear a newer user's session",
+      "passed": true
+    },
+    {
+      "case": "Successful response arriving after logout is discarded",
+      "passed": true
+    },
+    {
+      "case": "Server 503 never replays a mutation or clears valid tokens",
+      "passed": true
+    },
+    {
+      "case": "Public authentication requests omit bearer from an existing session",
+      "passed": true
+    }
+  ],
+  "sourceSha256": "04e913ea8de258124845f03110ebbe0bdf23ebd804dd9ba079d4abe1bfa80d15"
+}

@@ -1,0 +1,18 @@
+{
+  "javascriptApiTests": {
+    "passed": 7,
+    "total": 7,
+    "mode": "fetch fixture"
+  },
+  "javaApiChecks": {
+    "passed": 25,
+    "total": 25,
+    "mode": "injected transport"
+  },
+  "jsxCssSyntax": "PASS with React/react-dom/lucide/qrcode external",
+  "npmInstall": "BLOCKED: ENOTFOUND registry.npmjs.org",
+  "viteBuild": "NOT RUN: dependencies unavailable",
+  "httpBridge": "BLOCKED: loopback connect denied",
+  "browserUi": "NOT TESTED",
+  "nativeCard": "NOT TESTED"
+}

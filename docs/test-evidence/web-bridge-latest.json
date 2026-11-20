@@ -1,0 +1,9 @@
+{
+  "recordedAt": "2026-11-20T16:24:57.401033+00:00",
+  "sourceSha256": "c075c50e9d4c62d086e93ad40a36fca3cfe94390bf3af5a6967e07e1f4433007",
+  "mode": "cached-headless-bridge",
+  "bridgeCompile": "PASS",
+  "javaApiChecks": "PASS",
+  "reactBuild": "separate npm run build",
+  "oracleSimulator": "not-tested"
+}

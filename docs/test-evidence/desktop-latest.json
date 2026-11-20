@@ -1,0 +1,8 @@
+{
+  "recordedAt": "2026-11-20T14:23:48.234695+00:00",
+  "sourceSha256": "04e913ea8de258124845f03110ebbe0bdf23ebd804dd9ba079d4abe1bfa80d15",
+  "mode": "cached-compatibility",
+  "desktopSmoke": "PASS",
+  "backendConnection": "not-tested-by-smoke",
+  "oracleSimulator": "not-tested-by-smoke"
+}

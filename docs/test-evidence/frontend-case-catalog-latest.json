@@ -1,0 +1,644 @@
+{
+  "scenarioCount": 57,
+  "recordedAt": "2026-11-20T14:23:42.241564300Z",
+  "definitions": [
+    {
+      "expected": "Hiển thị trạng thái UP.",
+      "id": "NET-01",
+      "title": "BE sẵn sàng",
+      "mode": "Thao tác FE",
+      "tab": "Kết nối",
+      "steps": "Nhập địa chỉ BE rồi bấm Kết nối.",
+      "group": "NET"
+    },
+    {
+      "expected": "Lỗi ngắn; không tự gửi lại thao tác ghi.",
+      "id": "NET-02",
+      "title": "BE mất kết nối",
+      "mode": "Test tự động",
+      "tab": "Kết nối",
+      "steps": "Dùng transport giả lập timeout hoặc mất kết nối.",
+      "group": "NET"
+    },
+    {
+      "expected": "Từ chối cấu hình; không lộ thông tin trong URL.",
+      "id": "NET-03",
+      "title": "Địa chỉ không hợp lệ",
+      "mode": "Thao tác FE",
+      "tab": "Kết nối",
+      "steps": "Nhập URL sai hoặc HTTP ngoài localhost.",
+      "group": "NET"
+    },
+    {
+      "expected": "Hiển thị đúng người dùng và quyền.",
+      "id": "NET-04",
+      "title": "Đăng nhập quản trị",
+      "mode": "Thao tác FE",
+      "tab": "Kết nối",
+      "steps": "Bấm Đăng nhập và hoàn tất MFA nếu được yêu cầu.",
+      "group": "NET"
+    },
+    {
+      "expected": "Xóa token, bảng, PIN và thông tin thẻ của BE trước.",
+      "id": "NET-05",
+      "title": "Đổi backend",
+      "mode": "Test tự động",
+      "tab": "Kết nối",
+      "steps": "Đăng nhập, tải dữ liệu rồi kết nối BE khác.",
+      "group": "NET"
+    },
+    {
+      "expected": "Có card ID, public key và fingerprint.",
+      "id": "CARD-01",
+      "title": "Đọc thẻ",
+      "mode": "Thao tác FE",
+      "tab": "Thẻ & PIN",
+      "steps": "Chọn simulator hoặc PC/SC, bấm Đọc thẻ.",
+      "group": "CARD"
+    },
+    {
+      "expected": "Credential ACTIVE; tài khoản được kích hoạt.",
+      "id": "CARD-02",
+      "title": "Gán thẻ",
+      "mode": "Thao tác FE",
+      "tab": "Thẻ & PIN",
+      "steps": "Admin chọn tài khoản, đối chiếu fingerprint rồi gán thẻ.",
+      "group": "CARD"
+    },
+    {
+      "expected": "BE xác minh chữ ký; tiếp tục MFA nếu cần.",
+      "id": "CARD-03",
+      "title": "PIN đúng",
+      "mode": "Thao tác FE",
+      "tab": "Thẻ & PIN",
+      "steps": "Nhập tài khoản và PIN đúng, bấm Đăng nhập bằng thẻ.",
+      "group": "CARD"
+    },
+    {
+      "expected": "Không cấp token; hiện số lần thử còn lại.",
+      "id": "CARD-04",
+      "title": "PIN sai một lần",
+      "mode": "Thao tác FE",
+      "tab": "Thẻ & PIN",
+      "steps": "Nhập sai PIN đúng một lần trên thẻ lab.",
+      "group": "CARD"
+    },
+    {
+      "expected": "PIN mới dùng được; PIN cũ bị từ chối.",
+      "id": "CARD-05",
+      "title": "Đổi PIN",
+      "mode": "Thao tác FE",
+      "tab": "Thẻ & PIN",
+      "steps": "Nhập PIN cũ và PIN mới gồm 6–12 số.",
+      "group": "CARD"
+    },
+    {
+      "expected": "Thông báo đúng lỗi; không lộ hoặc giữ bộ đệm PIN.",
+      "id": "CARD-06",
+      "title": "Lỗi applet / khóa PIN",
+      "mode": "Test tự động",
+      "tab": "Thẻ & PIN",
+      "steps": "Giả lập 6A82, 6983, 63Cx và dữ liệu APDU lỗi.",
+      "group": "CARD"
+    },
+    {
+      "expected": "Đọc lại và từ chối khi card ID hoặc public key thay đổi.",
+      "id": "CARD-07",
+      "title": "Đổi thẻ trước khi gán",
+      "mode": "Test tự động",
+      "tab": "Thẻ & PIN",
+      "steps": "Đọc thẻ A, thay thẻ B rồi bấm Gán thẻ.",
+      "group": "CARD"
+    },
+    {
+      "expected": "Tạo Person–Identity–Account; trạng thái chờ kích hoạt.",
+      "id": "ACC-01",
+      "title": "Tạo tài khoản",
+      "mode": "Thao tác FE",
+      "tab": "Tài khoản",
+      "steps": "Admin tạo username, họ tên và email.",
+      "group": "ACC"
+    },
+    {
+      "expected": "Báo dữ liệu trùng, không tạo dữ liệu dở dang.",
+      "id": "ACC-02",
+      "title": "Username trùng",
+      "mode": "Thao tác FE",
+      "tab": "Tài khoản",
+      "steps": "Tạo lại cùng username.",
+      "group": "ACC"
+    },
+    {
+      "expected": "Phiên cũ bị thu hồi; mở khóa không khôi phục token cũ.",
+      "id": "ACC-03",
+      "title": "Khóa / mở khóa",
+      "mode": "Thao tác FE",
+      "tab": "Tài khoản",
+      "steps": "Dùng cửa sổ admin khóa rồi mở khóa thành viên.",
+      "group": "ACC"
+    },
+    {
+      "expected": "Các cửa sổ của tài khoản phải đăng nhập lại.",
+      "id": "ACC-04",
+      "title": "Thu hồi mọi phiên",
+      "mode": "Thao tác FE",
+      "tab": "Tài khoản",
+      "steps": "Admin chọn tài khoản rồi bấm Thu hồi mọi phiên.",
+      "group": "ACC"
+    },
+    {
+      "expected": "409 LAST_SUPERUSER_PROTECTED.",
+      "id": "ACC-05",
+      "title": "Bảo vệ admin cuối",
+      "mode": "Thao tác FE",
+      "tab": "Tài khoản",
+      "steps": "Thử khóa quản trị viên hoạt động cuối cùng.",
+      "group": "ACC"
+    },
+    {
+      "expected": "Chỉ kích hoạt khi mã đúng; secret hiển thị một lần.",
+      "id": "MFA-01",
+      "title": "Kích hoạt TOTP",
+      "mode": "Thao tác FE",
+      "tab": "MFA",
+      "steps": "Dùng activation token, quét QR và nhập mã đầu tiên.",
+      "group": "MFA"
+    },
+    {
+      "expected": "Mã đúng mới qua bước đầu; cần TOTP nếu tài khoản đã bật.",
+      "id": "MFA-02",
+      "title": "Đăng nhập OTP email",
+      "mode": "Thao tác FE",
+      "tab": "MFA",
+      "steps": "Nhập username, lấy OTP từ email hoặc hộp thư lab.",
+      "group": "MFA"
+    },
+    {
+      "expected": "Từ chối; không bỏ qua bước MFA.",
+      "id": "MFA-03",
+      "title": "Sai / dùng lại mã",
+      "mode": "Thao tác FE",
+      "tab": "MFA",
+      "steps": "Nhập mã sai hoặc dùng lại mã đã xác minh.",
+      "group": "MFA"
+    },
+    {
+      "expected": "Từ chối mã; không cấp phiên AAL2.",
+      "id": "MFA-04",
+      "title": "TOTP ngoài cửa sổ",
+      "mode": "Test tự động",
+      "tab": "MFA",
+      "steps": "Giả lập mã hết hạn và time-step đã dùng.",
+      "group": "MFA"
+    },
+    {
+      "expected": "Chỉ admin local đọc được; production không có hộp thư này.",
+      "id": "MFA-05",
+      "title": "Hộp thư lab",
+      "mode": "Thao tác FE",
+      "tab": "MFA",
+      "steps": "Admin nhập delivery ID của yêu cầu OTP.",
+      "group": "MFA"
+    },
+    {
+      "expected": "Không cấp phiên mới; hủy thay TOTP giữ phiên hiện có.",
+      "id": "MFA-06",
+      "title": "Hủy bước MFA / QR",
+      "mode": "Test tự động",
+      "tab": "MFA",
+      "steps": "Hủy nhập mã sau login hoặc hủy QR thay TOTP.",
+      "group": "MFA"
+    },
+    {
+      "expected": "Token có TTL, dùng một lần; production gửi qua outbox.",
+      "id": "REC-01",
+      "title": "Mời kích hoạt",
+      "mode": "Thao tác FE",
+      "tab": "Khôi phục",
+      "steps": "Chọn tài khoản ở tab Tài khoản rồi gửi lời mời.",
+      "group": "REC"
+    },
+    {
+      "expected": "Nhận 10 mã một lần; mã cũ mất hiệu lực.",
+      "id": "REC-02",
+      "title": "Tạo mã khôi phục",
+      "mode": "Thao tác FE",
+      "tab": "Khôi phục",
+      "steps": "Đăng nhập đủ yếu tố rồi tạo lại recovery codes.",
+      "group": "REC"
+    },
+    {
+      "expected": "Phiên/credential cũ bị thu hồi; thiết lập lại TOTP.",
+      "id": "REC-03",
+      "title": "Dùng mã khôi phục",
+      "mode": "Thao tác FE",
+      "tab": "Khôi phục",
+      "steps": "Nhập username và một recovery code hợp lệ.",
+      "group": "REC"
+    },
+    {
+      "expected": "Bị từ chối; không tạo phiên mới.",
+      "id": "REC-04",
+      "title": "Dùng lại mã",
+      "mode": "Thao tác FE",
+      "tab": "Khôi phục",
+      "steps": "Thử lại recovery code đã sử dụng.",
+      "group": "REC"
+    },
+    {
+      "expected": "Thu hồi phiên/credential, phát hành lời mời và ghi audit.",
+      "id": "REC-05",
+      "title": "Admin reset MFA",
+      "mode": "Thao tác FE",
+      "tab": "Khôi phục",
+      "steps": "Admin chọn tài khoản, nhập lý do rồi reset.",
+      "group": "REC"
+    },
+    {
+      "expected": "Chỉ hiện metadata của bản thân; không hiện secret.",
+      "id": "CRED-01",
+      "title": "Xem credential",
+      "mode": "Thao tác FE",
+      "tab": "Credential",
+      "steps": "Mở Credential của tôi.",
+      "group": "CRED"
+    },
+    {
+      "expected": "Credential bị thu hồi và các phiên kết thúc.",
+      "id": "CRED-02",
+      "title": "Thu hồi credential",
+      "mode": "Thao tác FE",
+      "tab": "Credential",
+      "steps": "Đăng nhập AAL2 gần đây, chọn credential cần thu hồi.",
+      "group": "CRED"
+    },
+    {
+      "expected": "409; cần thêm phương thức khác trước.",
+      "id": "CRED-03",
+      "title": "Phương thức cuối",
+      "mode": "Thao tác FE",
+      "tab": "Credential",
+      "steps": "Thử gỡ phương thức xác thực cuối cùng.",
+      "group": "CRED"
+    },
+    {
+      "expected": "Yêu cầu AAL2; bảo vệ MFA của admin và thu hồi phiên.",
+      "id": "CRED-04",
+      "title": "Đổi / tắt TOTP",
+      "mode": "Thao tác FE",
+      "tab": "Credential",
+      "steps": "Thiết lập TOTP mới hoặc yêu cầu tắt TOTP.",
+      "group": "CRED"
+    },
+    {
+      "expected": "Chấp nhận proof hợp lệ, từ chối sai/replay/counter giảm.",
+      "id": "CRED-05",
+      "title": "Passkey hợp lệ / sai",
+      "mode": "Kiểm tra API",
+      "tab": "Credential",
+      "steps": "Dùng fixture ký WebAuthn với origin/RP ID/UV khác nhau.",
+      "group": "CRED"
+    },
+    {
+      "expected": "Chỉ thấy phiên của tài khoản đang đăng nhập.",
+      "id": "SES-01",
+      "title": "Danh sách phiên",
+      "mode": "Thao tác FE",
+      "tab": "Phiên",
+      "steps": "Bấm Tải phiên.",
+      "group": "SES"
+    },
+    {
+      "expected": "Token của phiên đó không gọi API được nữa.",
+      "id": "SES-02",
+      "title": "Thu hồi một phiên",
+      "mode": "Thao tác FE",
+      "tab": "Phiên",
+      "steps": "Chọn dòng phiên rồi thu hồi.",
+      "group": "SES"
+    },
+    {
+      "expected": "Token được xóa khỏi bộ nhớ và phiên bị thu hồi.",
+      "id": "SES-03",
+      "title": "Đăng xuất",
+      "mode": "Thao tác FE",
+      "tab": "Phiên",
+      "steps": "Bấm Đăng xuất.",
+      "group": "SES"
+    },
+    {
+      "expected": "Một lần refresh; reuse thu hồi family.",
+      "id": "SES-04",
+      "title": "Refresh / reuse",
+      "mode": "Test tự động",
+      "tab": "Phiên",
+      "steps": "Giả lập access hết hạn, refresh rotate và dùng lại refresh cũ.",
+      "group": "SES"
+    },
+    {
+      "expected": "Không phục hồi phiên cũ hoặc áp dụng kết quả của người cũ.",
+      "id": "SES-05",
+      "title": "Logout khi đang refresh",
+      "mode": "Test tự động",
+      "tab": "Phiên",
+      "steps": "Giả lập logout hoặc đổi tài khoản khi request đang chạy.",
+      "group": "SES"
+    },
+    {
+      "expected": "Xóa bảng/editor/PIN; kết quả cũ không hiển thị lại.",
+      "id": "SES-06",
+      "title": "Xóa dữ liệu khi logout",
+      "mode": "Test tự động",
+      "tab": "Phiên",
+      "steps": "Tải dữ liệu rồi logout; giả lập request cũ trả về muộn.",
+      "group": "SES"
+    },
+    {
+      "expected": "Role mới không tự có quyền; chỉ nhận quyền đã chọn.",
+      "id": "RBAC-01",
+      "title": "Tạo role",
+      "mode": "Thao tác FE",
+      "tab": "Phân quyền",
+      "steps": "Tạo role, chọn permission từ catalog backend.",
+      "group": "RBAC"
+    },
+    {
+      "expected": "Quyền đổi ở request tiếp theo dù JWT còn hạn.",
+      "id": "RBAC-02",
+      "title": "Cấp / gỡ role",
+      "mode": "Thao tác FE",
+      "tab": "Phân quyền",
+      "steps": "Gán role cho account, rồi thu hồi assignment.",
+      "group": "RBAC"
+    },
+    {
+      "expected": "403; không được tự nâng thành idp.manage.",
+      "id": "RBAC-03",
+      "title": "Cấp vượt quyền",
+      "mode": "Thao tác FE",
+      "tab": "Phân quyền",
+      "steps": "Đăng nhập người được ủy quyền rồi thử cấp quyền cao hơn.",
+      "group": "RBAC"
+    },
+    {
+      "expected": "Không vượt scope; từ chối thời hạn sai hoặc chồng lấp.",
+      "id": "RBAC-04",
+      "title": "Scope / thời hạn",
+      "mode": "Kiểm tra API",
+      "tab": "Phân quyền",
+      "steps": "Giả lập assignment theo tổ chức/ứng dụng và khoảng hiệu lực.",
+      "group": "RBAC"
+    },
+    {
+      "expected": "409; bảo toàn quyền quản trị tối thiểu.",
+      "id": "RBAC-05",
+      "title": "Role hệ thống",
+      "mode": "Thao tác FE",
+      "tab": "Phân quyền",
+      "steps": "Thử sửa SUPER_ADMIN hoặc gỡ admin hoạt động cuối.",
+      "group": "RBAC"
+    },
+    {
+      "expected": "Xóa dữ liệu quản trị và vô hiệu hóa nút không còn quyền.",
+      "id": "RBAC-06",
+      "title": "Mất quyền quản trị",
+      "mode": "Test tự động",
+      "tab": "Phân quyền",
+      "steps": "Tải lại hồ sơ với quyền thấp hơn hoặc nhận 403.",
+      "group": "RBAC"
+    },
+    {
+      "expected": "Có kid/trạng thái; không có private key.",
+      "id": "KEY-01",
+      "title": "Xem public key",
+      "mode": "Thao tác FE",
+      "tab": "Khóa ký",
+      "steps": "Mở quản lý khóa ký hoặc đọc JWKS.",
+      "group": "KEY"
+    },
+    {
+      "expected": "Khóa NEXT được công bố trong JWKS.",
+      "id": "KEY-02",
+      "title": "Chuẩn bị NEXT",
+      "mode": "Thao tác FE",
+      "tab": "Khóa ký",
+      "steps": "Dùng GENERATE cho lab hoặc alias PKCS12 đã cấu hình.",
+      "group": "KEY"
+    },
+    {
+      "expected": "Token mới dùng key mới; token cũ còn trong overlap.",
+      "id": "KEY-03",
+      "title": "Xoay khóa",
+      "mode": "Thao tác FE",
+      "tab": "Khóa ký",
+      "steps": "Chọn NEXT rồi kích hoạt với overlap 600 giây.",
+      "group": "KEY"
+    },
+    {
+      "expected": "ACTIVE bị chặn; thu hồi RETIRED kết thúc các phiên.",
+      "id": "KEY-04",
+      "title": "Thu hồi khóa",
+      "mode": "Thao tác FE",
+      "tab": "Khóa ký",
+      "steps": "Thử thu hồi ACTIVE, sau đó thử RETIRED trong môi trường lab.",
+      "group": "KEY"
+    },
+    {
+      "expected": "Có 41 bảng nghiệp vụ; trường bí mật được ẩn.",
+      "id": "DATA-01",
+      "title": "Đọc catalog",
+      "mode": "Thao tác FE",
+      "tab": "Dữ liệu",
+      "steps": "Admin tải danh mục và đọc các bảng.",
+      "group": "DATA"
+    },
+    {
+      "expected": "400, lỗi ngắn và tên trường an toàn khi có thể xác định.",
+      "id": "DATA-02",
+      "title": "Dữ liệu đầu vào sai",
+      "mode": "Thao tác FE",
+      "tab": "Dữ liệu",
+      "steps": "Gửi JSON sai cú pháp, thiếu trường hoặc sai kiểu.",
+      "group": "DATA"
+    },
+    {
+      "expected": "Bị từ chối; phải đi qua API nghiệp vụ.",
+      "id": "DATA-03",
+      "title": "Bảng chỉ đọc",
+      "mode": "Thao tác FE",
+      "tab": "Dữ liệu",
+      "steps": "Thử ghi trực tiếp credential, token, challenge hoặc audit.",
+      "group": "DATA"
+    },
+    {
+      "expected": "Có code + requestId; không lộ SQL, token hay stack trace.",
+      "id": "DATA-04",
+      "title": "Lỗi / quá tải API",
+      "mode": "Test tự động",
+      "tab": "Dữ liệu",
+      "steps": "Giả lập 404/405/415/429, lỗi DB và lỗi nội bộ.",
+      "group": "DATA"
+    },
+    {
+      "expected": "Xóa editor và dòng cũ; không cập nhật nhầm bảng.",
+      "id": "DATA-05",
+      "title": "Đổi bảng đang sửa",
+      "mode": "Test tự động",
+      "tab": "Dữ liệu",
+      "steps": "Nhập JSON ở một bảng rồi chọn bảng khác.",
+      "group": "DATA"
+    },
+    {
+      "expected": "Chưa triển khai đầy đủ; chưa có PASS.",
+      "id": "PLAN-01",
+      "title": "OIDC / SSO",
+      "mode": "Chưa triển khai",
+      "tab": "Chờ bổ sung",
+      "steps": "Authorization Code + PKCE, discovery, ID Token và logout RP.",
+      "group": "PLAN"
+    },
+    {
+      "expected": "Chưa triển khai đầy đủ; chưa có PASS.",
+      "id": "PLAN-02",
+      "title": "Consent / policy",
+      "mode": "Chưa triển khai",
+      "tab": "Chờ bổ sung",
+      "steps": "Cấp và thu hồi consent, policy precedence, claim mapping.",
+      "group": "PLAN"
+    },
+    {
+      "expected": "Mới có một phần model/onboarding; còn nghiệp vụ phải hoàn thiện.",
+      "id": "PLAN-03",
+      "title": "Vòng đời định danh",
+      "mode": "Chưa triển khai",
+      "tab": "Chờ bổ sung",
+      "steps": "API Person/Identity, cây tổ chức và membership đầy đủ.",
+      "group": "PLAN"
+    }
+  ],
+  "scope": "UI wiring and case definitions only; no backend/card connections; scenario definitions are not execution PASS",
+  "tabCount": 11,
+  "cases": [
+    {
+      "passed": true,
+      "case": "Every scenario has a unique ID, steps and expected outcome"
+    },
+    {
+      "passed": true,
+      "case": "Main tabs follow the case catalog"
+    },
+    {
+      "passed": true,
+      "case": "Tab Kết nối is bound to NET"
+    },
+    {
+      "passed": true,
+      "case": "Case instructions render correctly in Kết nối"
+    },
+    {
+      "passed": true,
+      "case": "Tab Thẻ & PIN is bound to CARD"
+    },
+    {
+      "passed": true,
+      "case": "Case instructions render correctly in Thẻ & PIN"
+    },
+    {
+      "passed": true,
+      "case": "Tab Tài khoản is bound to ACC"
+    },
+    {
+      "passed": true,
+      "case": "Case instructions render correctly in Tài khoản"
+    },
+    {
+      "passed": true,
+      "case": "Tab MFA is bound to MFA"
+    },
+    {
+      "passed": true,
+      "case": "Case instructions render correctly in MFA"
+    },
+    {
+      "passed": true,
+      "case": "Tab Khôi phục is bound to REC"
+    },
+    {
+      "passed": true,
+      "case": "Case instructions render correctly in Khôi phục"
+    },
+    {
+      "passed": true,
+      "case": "Tab Credential is bound to CRED"
+    },
+    {
+      "passed": true,
+      "case": "Case instructions render correctly in Credential"
+    },
+    {
+      "passed": true,
+      "case": "Tab Phiên is bound to SES"
+    },
+    {
+      "passed": true,
+      "case": "Case instructions render correctly in Phiên"
+    },
+    {
+      "passed": true,
+      "case": "Tab Phân quyền is bound to RBAC"
+    },
+    {
+      "passed": true,
+      "case": "Case instructions render correctly in Phân quyền"
+    },
+    {
+      "passed": true,
+      "case": "Tab Khóa ký is bound to KEY"
+    },
+    {
+      "passed": true,
+      "case": "Case instructions render correctly in Khóa ký"
+    },
+    {
+      "passed": true,
+      "case": "Tab Dữ liệu is bound to DATA"
+    },
+    {
+      "passed": true,
+      "case": "Case instructions render correctly in Dữ liệu"
+    },
+    {
+      "passed": true,
+      "case": "Tab Chờ bổ sung is bound to PLAN"
+    },
+    {
+      "passed": true,
+      "case": "Case instructions render correctly in Chờ bổ sung"
+    },
+    {
+      "passed": true,
+      "case": "Unimplemented scenarios are explicitly marked"
+    },
+    {
+      "passed": true,
+      "case": "Permission buttons are disabled before login"
+    },
+    {
+      "passed": true,
+      "case": "Delegated role.read enables only permitted controls"
+    },
+    {
+      "passed": true,
+      "case": "Delegated member cannot use root-only data controls"
+    },
+    {
+      "passed": true,
+      "case": "Root can access all role/key controls"
+    },
+    {
+      "passed": true,
+      "case": "Logout disables all capability controls"
+    }
+  ],
+  "sourceSha256": "04e913ea8de258124845f03110ebbe0bdf23ebd804dd9ba079d4abe1bfa80d15"
+}

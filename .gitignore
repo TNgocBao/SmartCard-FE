@@ -1,0 +1,15 @@
+**/target/
+**/build/
+**/data/
+**/.idea/
+*.iml
+.env
+*.p12
+*.jks
+*.log
+*.zip
+.cache/
+**/.local/
+
+node_modules/
+dist/

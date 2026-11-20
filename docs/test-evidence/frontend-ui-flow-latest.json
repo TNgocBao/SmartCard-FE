@@ -1,0 +1,191 @@
+{
+  "recordedAt": "2026-11-20T14:23:47.019816300Z",
+  "cases": [
+    {
+      "passed": true,
+      "case": "Password login loads admin profile and overview"
+    },
+    {
+      "passed": true,
+      "case": "Password input array is erased"
+    },
+    {
+      "passed": true,
+      "case": "Failed login clears previous identity, tables, editor and card"
+    },
+    {
+      "passed": true,
+      "case": "Failed login shows one short safe error"
+    },
+    {
+      "passed": true,
+      "case": "Cancelling MFA grants no session and sends no verification"
+    },
+    {
+      "passed": true,
+      "case": "Rejected MFA response never enables privileged actions"
+    },
+    {
+      "passed": true,
+      "case": "MFA confirmation loads the profile and permissions"
+    },
+    {
+      "passed": true,
+      "case": "MFA code is absent from activity log"
+    },
+    {
+      "passed": true,
+      "case": "Cancelling activation before submit preserves current session"
+    },
+    {
+      "passed": true,
+      "case": "Cancelling replacement QR preserves current session and skips verification"
+    },
+    {
+      "passed": true,
+      "case": "Successful TOTP replacement clears session and privileged views"
+    },
+    {
+      "passed": true,
+      "case": "Read-only key permission exposes only the Close option"
+    },
+    {
+      "passed": true,
+      "case": "Closing credential dialog sends no DELETE"
+    },
+    {
+      "passed": true,
+      "case": "Credential revoke requires a selected row"
+    },
+    {
+      "passed": true,
+      "case": "Cancelling revoke confirmation preserves credential session"
+    },
+    {
+      "passed": true,
+      "case": "Credential revoke success clears local token and views"
+    },
+    {
+      "passed": true,
+      "case": "Cancelling role creation sends no mutation"
+    },
+    {
+      "passed": true,
+      "case": "Sessions screen loads active session metadata"
+    },
+    {
+      "passed": true,
+      "case": "Cancelling session revocation sends no DELETE"
+    },
+    {
+      "passed": true,
+      "case": "Revoking another session reloads its status on screen"
+    },
+    {
+      "passed": true,
+      "case": "Revoking current session handles 401 refresh rejection and clears UI"
+    },
+    {
+      "passed": true,
+      "case": "Sorted table selection resolves the correct model ID"
+    },
+    {
+      "passed": true,
+      "case": "Changing resource clears previous rows, editor and loaded-resource marker"
+    },
+    {
+      "passed": true,
+      "case": "JSON array is rejected locally before any request"
+    },
+    {
+      "passed": true,
+      "case": "Malformed JSON is rejected locally without raw payload in dialog"
+    },
+    {
+      "passed": true,
+      "case": "Busy state displays the interaction overlay"
+    },
+    {
+      "passed": true,
+      "case": "Second action is refused while a worker is running"
+    },
+    {
+      "passed": true,
+      "case": "Button keyboard/action event is ignored while busy"
+    },
+    {
+      "passed": true,
+      "case": "Late response after logout cannot repopulate UI"
+    },
+    {
+      "passed": true,
+      "case": "Failed reread invalidates the cached card identity"
+    },
+    {
+      "passed": true,
+      "case": "Card connection failure clears PIN and grants no session"
+    },
+    {
+      "passed": true,
+      "case": "APDU read displays card identity and RSA fingerprint"
+    },
+    {
+      "passed": true,
+      "case": "Swapped card is detected before credential enrollment request"
+    },
+    {
+      "passed": true,
+      "case": "Matching card is reread and enrolled once"
+    },
+    {
+      "passed": true,
+      "case": "Incorrect card PIN never submits signature or grants session"
+    },
+    {
+      "passed": true,
+      "case": "Card login signs RSA challenge and loads admin profile"
+    },
+    {
+      "passed": true,
+      "case": "PIN remains inside APDU boundary and absent from API payloads"
+    },
+    {
+      "passed": true,
+      "case": "Truncated signature is rejected before verification request"
+    },
+    {
+      "passed": true,
+      "case": "Logout clears local state even when backend times out"
+    },
+    {
+      "passed": true,
+      "case": "Timeout detail is not exposed in dialog or activity"
+    },
+    {
+      "passed": true,
+      "case": "Backend switch clears old token and every private screen"
+    },
+    {
+      "passed": true,
+      "case": "Admin downgrade removes privileged data and root actions"
+    },
+    {
+      "passed": true,
+      "case": "Downgrade retains only explicitly granted controls"
+    },
+    {
+      "passed": true,
+      "case": "403 clears cached capabilities until profile reload"
+    },
+    {
+      "passed": true,
+      "case": "Stale authentication cannot restore a cleared session"
+    },
+    {
+      "passed": true,
+      "case": "Closing window erases tokens and sensitive UI values"
+    }
+  ],
+  "simulation": "Real Swing controllers with in-process API responses, software APDU RSA-2048 signatures, injected card failures and scripted dialogs; no network, real backend, MySQL or Oracle Simulator",
+  "sourceSha256": "04e913ea8de258124845f03110ebbe0bdf23ebd804dd9ba079d4abe1bfa80d15"
+}

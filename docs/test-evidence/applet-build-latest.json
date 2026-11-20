@@ -1,0 +1,12 @@
+{
+  "recordedAt": "2026-11-20T13:14:27.984426+00:00",
+  "status": "PASS_COMPILE_ONLY",
+  "converterVersion": "26.0",
+  "converterErrors": 0,
+  "converterWarnings": 0,
+  "nativeSimulatorVerified": false,
+  "physicalCardVerified": false,
+  "artifact": "card-applet/build/cap/kma/idp/card/javacard/card.cap",
+  "artifactSha256": "e49530573153b22a4b8fae330bf8f32ef0c445a0699b67604bf6c1f2e5db3e17",
+  "artifactBytes": 8434
+}

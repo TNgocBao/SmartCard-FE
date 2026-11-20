@@ -1,0 +1,155 @@
+{
+  "cases": [
+    {
+      "case": "API preserves safe status, code and request ID",
+      "passed": true
+    },
+    {
+      "case": "Dialog shows concise instruction and correlation ID",
+      "passed": true
+    },
+    {
+      "case": "Server detail never appears in dialog or activity log",
+      "passed": true
+    },
+    {
+      "case": "HTTP 400 has short fallback without raw server text",
+      "passed": true
+    },
+    {
+      "case": "HTTP 401 has short fallback without raw server text",
+      "passed": true
+    },
+    {
+      "case": "HTTP 403 has short fallback without raw server text",
+      "passed": true
+    },
+    {
+      "case": "HTTP 404 has short fallback without raw server text",
+      "passed": true
+    },
+    {
+      "case": "HTTP 405 has short fallback without raw server text",
+      "passed": true
+    },
+    {
+      "case": "HTTP 406 has short fallback without raw server text",
+      "passed": true
+    },
+    {
+      "case": "HTTP 409 has short fallback without raw server text",
+      "passed": true
+    },
+    {
+      "case": "HTTP 410 has short fallback without raw server text",
+      "passed": true
+    },
+    {
+      "case": "HTTP 415 has short fallback without raw server text",
+      "passed": true
+    },
+    {
+      "case": "HTTP 423 has short fallback without raw server text",
+      "passed": true
+    },
+    {
+      "case": "HTTP 429 has short fallback without raw server text",
+      "passed": true
+    },
+    {
+      "case": "HTTP 500 has short fallback without raw server text",
+      "passed": true
+    },
+    {
+      "case": "HTTP 503 has short fallback without raw server text",
+      "passed": true
+    },
+    {
+      "case": "Validation names useful fields without exposing unknown server strings",
+      "passed": true
+    },
+    {
+      "case": "Read-only table error gives the business action rather than a protocol warning",
+      "passed": true
+    },
+    {
+      "case": "Unknown exception text is never displayed or logged",
+      "passed": true
+    },
+    {
+      "case": "Invalid base URL hides embedded credentials",
+      "passed": true
+    },
+    {
+      "case": "Timeout has retry-safe instruction",
+      "passed": true
+    },
+    {
+      "case": "TLS failure omits certificate/internal error detail",
+      "passed": true
+    },
+    {
+      "case": "DNS failure has specific user instruction",
+      "passed": true
+    },
+    {
+      "case": "Connection refused has specific user instruction",
+      "passed": true
+    },
+    {
+      "case": "Cancelled action does not display a Java exception",
+      "passed": true
+    },
+    {
+      "case": "Invalid request ID is suppressed",
+      "passed": true
+    },
+    {
+      "case": "Fixed input instruction remains visible",
+      "passed": true
+    },
+    {
+      "case": "APDU 6982 maps to PIN_REQUIRED",
+      "passed": true
+    },
+    {
+      "case": "APDU 6983 maps to PIN_BLOCKED",
+      "passed": true
+    },
+    {
+      "case": "APDU 63c0 maps to PIN_BLOCKED",
+      "passed": true
+    },
+    {
+      "case": "APDU 63c2 maps to PIN_INVALID",
+      "passed": true
+    },
+    {
+      "case": "APDU 6a82 maps to APPLET_NOT_FOUND",
+      "passed": true
+    },
+    {
+      "case": "APDU 6d00 maps to CARD_PROTOCOL_ERROR",
+      "passed": true
+    },
+    {
+      "case": "PIN buffer cleared when challenge validation fails",
+      "passed": true
+    },
+    {
+      "case": "Both PIN buffers cleared when replacement validation fails",
+      "passed": true
+    },
+    {
+      "case": "PIN buffer cleared when PIN format is invalid",
+      "passed": true
+    },
+    {
+      "case": "Malformed card identity produces safe protocol error",
+      "passed": true
+    }
+  ],
+  "recordedAt": "2026-11-20T14:23:41.600325200Z",
+  "transport": "local deterministic API/APDU fixtures; no sockets",
+  "sourceSha256": "04e913ea8de258124845f03110ebbe0bdf23ebd804dd9ba079d4abe1bfa80d15"
+}

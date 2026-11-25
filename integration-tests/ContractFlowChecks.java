@@ -1,5 +1,6 @@
 package vn.kma.desktop.integration;
 import java.io.*;
+import java.net.URI;
 import java.net.http.*;
 import java.nio.*;
 import java.nio.charset.StandardCharsets;
@@ -37,12 +38,12 @@ public final class ContractFlowChecks {
             new ConfigDataApplicationContextInitializer().initialize(context);context.register(IdpApplication.class);context.refresh();
             context.getBean(ApplicationRunner.class).run(new DefaultApplicationArguments(new String[0]));
             MockMvc mvc=MockMvcBuilders.webAppContextSetup(context).addFilters(context.getBean(FilterChainProxy.class)).build();
-            try {checks.run(mvc);} finally {checks.report();}
+            try {checks.run(mvc,context.getBean(vn.kma.idp.shared.Database.class));} finally {checks.report();}
         }
         System.out.println("FE-BE CONTRACT CHECKS PASSED: "+checks.cases.size());
     }
     private void check(String label,boolean passed){cases.add(Map.of("case",label,"passed",passed));if(!passed)throw new AssertionError(label);}
-    private void run(MockMvc mvc) throws Exception {
+    private void run(MockMvc mvc,vn.kma.idp.shared.Database db) throws Exception {
         var adminTransport=new MvcTransport(mvc);var admin=new IdpApi("http://127.0.0.1:8080",adminTransport);
         admin.session(admin.call("POST","/api/v1/auth/password",Map.of("username","admin","password","Test-only-password-2026")));
         String adminId=admin.call("GET","/api/v1/me",null).path("data").path("id").asText();
@@ -56,19 +57,71 @@ public final class ContractFlowChecks {
         admin.session(adminMfa);check("FE enrollment obtains real AAL2 admin token",admin.hasSession());
         String account=admin.call("POST","/api/v1/accounts",Map.of("username","contract01","displayName","Contract User","email","contract@example.test")).path("accountId").asText();
         check("FE account creation executes BE transaction",!account.isBlank());
-        var card=new SoftwareCard();var transport=new MvcTransport(mvc);var user=new IdpApi("http://127.0.0.1:8080",transport);
+        var card=new DemoCardReader();card.create();card.install();var transport=new MvcTransport(mvc);var user=new IdpApi("http://127.0.0.1:8080",transport);
         var cardService=new SmartCardAuthenticationService(()->user,simulator->card.open());
         var identity=cardService.read(true);
         check("Production CardClient reads simulated APDU public key and identity",identity.identifier().length()==32&&!identity.publicKeySpki().isBlank());
-        admin.call("POST","/api/v1/accounts/"+account+"/smart-cards",Map.of("cardIdentifier",identity.identifier(),"publicKeySpki",identity.publicKeySpki(),"transport","SIMULATOR"));
+        admin.call("POST","/api/v1/accounts/"+account+"/smart-cards",Map.of("cardIdentifier",identity.identifier(),"publicKeySpki",identity.publicKeySpki(),"transport","SOFTWARE"));
+        // Validation and transaction rollback matrix, via the same security/controller stack.
+        for(Object body:List.of(Map.of(),Map.of("username"," ","cardIdentifier",identity.identifier()),Map.of("username","contract01","cardIdentifier","bad"),Map.of("username","x".repeat(129),"cardIdentifier",identity.identifier()),Map.of("username","contract01","cardIdentifier",identity.identifier(),"pin","123456")))expect(mvc,"POST","/api/v1/auth/smart-card/challenge",body,null,400);
+        for(Object body:List.of(Map.of(),Map.of("challengeId","bad","signature","abc"),Map.of("challengeId",UUID.randomUUID().toString(),"signature"," "),Map.of("challengeId",UUID.randomUUID().toString(),"signature","x".repeat(1025))))expect(mvc,"POST","/api/v1/auth/smart-card/verify",body,null,400);
+        expect(mvc,"POST","/api/v1/auth/smart-card/verify",Map.of("challengeId",UUID.randomUUID().toString(),"signature","YWJj"),null,401);
+        expect(mvc,"GET","/api/v1/me/smart-cards",null,null,401);
+        expect(mvc,"GET","/api/v1/me/smart-cards?page=-1",null,adminTransport.lastTokens.path("accessToken").asText(),400);
+        for(Object body:List.of(Map.of("username","ab","displayName","Test"),Map.of("username","bad user","displayName","Test"),Map.of("username","validuser","displayName"," "),Map.of("username","validuser","displayName","Test","email","invalid")))expect(mvc,"POST","/api/v1/accounts",body,adminTransport.lastTokens.path("accessToken").asText(),400);
+        for(Object body:List.of(Map.of("cardIdentifier",identity.identifier(),"publicKeySpki","bad-key","transport","SOFTWARE"),Map.of("cardIdentifier",identity.identifier(),"publicKeySpki",identity.publicKeySpki(),"transport","REMOTE"),Map.of("cardIdentifier","bad","publicKeySpki",identity.publicKeySpki(),"transport","SOFTWARE")))expect(mvc,"POST","/api/v1/accounts/"+account+"/smart-cards",body,adminTransport.lastTokens.path("accessToken").asText(),400);
+        long before=db.jdbc.queryForObject("SELECT COUNT(*) FROM credential WHERE account_id=?",Long.class,account);
+        expect(mvc,"POST","/api/v1/accounts/"+account+"/smart-cards",Map.of("cardIdentifier",identity.identifier(),"publicKeySpki",identity.publicKeySpki(),"transport","SOFTWARE"),adminTransport.lastTokens.path("accessToken").asText(),409);
+        check("Duplicate registration rolls back without orphan credentials",db.jdbc.queryForObject("SELECT COUNT(*) FROM credential WHERE account_id=?",Long.class,account)==before);
         char[] wrong="000000".toCharArray();boolean badPin=false;try{cardService.authenticate(true,"contract01",wrong);}catch(IllegalStateException expected){badPin=expected.getMessage().contains("PIN");}
         check("Wrong card PIN prevents FE from receiving a token",badPin&&!user.hasSession());
         check("PIN char array is cleared after a failed card attempt",Arrays.equals(wrong,new char[wrong.length]));
         char[] pin="123456".toCharArray();var profile=cardService.authenticate(true,"contract01",pin);
         check("FE APDU signature is verified by real BE",profile.path("data").path("id").asText().equals(account));
+
+        JsonNode originalTokens=transport.lastTokens;
+        var savedCards=user.call("GET","/api/v1/me/smart-cards",null).path("data");
+        check("Card registration persisted in database",savedCards.size()==1&&savedCards.get(0).path("card_identifier").asText().equals(identity.identifier()));
+        check("Software card transport is correctly persisted",savedCards.get(0).path("transport").asText().equals("SOFTWARE"));
+        check("Card list excludes public key payload",!savedCards.toString().contains("public_key_spki"));
+        check("Card proof success recorded in database",user.call("GET","/api/v1/me/smart-cards/history",null).path("data").toString().contains("CARD_PROOF"));
+        boolean crossAccount=false;try{user.call("GET","/api/v1/me/smart-cards?accountId="+adminId,null);}catch(IllegalStateException expected){crossAccount=expected.getMessage().contains("403");}
+        check("User cannot read another account card inventory",crossAccount);
+        var proofChallenge=user.call("POST","/api/v1/auth/smart-card/challenge",Map.of("username","contract01","cardIdentifier",identity.identifier()));
+        byte[] proofSignature;try(var t=card.open()){proofSignature=new CardClient(t).sign(Base64.getDecoder().decode(proofChallenge.path("payload").asText()),"123456".toCharArray());}
+        var validProof=Map.of("challengeId",proofChallenge.path("challengeId").asText(),"signature",Base64.getEncoder().encodeToString(proofSignature));
+        proofSignature[0]^=1;
+        boolean tampered=false;try{user.call("POST","/api/v1/auth/smart-card/verify",Map.of("challengeId",proofChallenge.path("challengeId").asText(),"signature",Base64.getEncoder().encodeToString(proofSignature)));}catch(IllegalStateException expected){tampered=expected.getMessage().contains("401");}
+        check("Modified signature rejected by real backend",tampered);
+        var proofTokens=user.call("POST","/api/v1/auth/smart-card/verify",validProof);
+        // Close the additional test session without replacing the user's current one.
+        var proofSession=new IdpApi("http://127.0.0.1:8080",new MvcTransport(mvc));proofSession.session(proofTokens);proofSession.call("POST","/api/v1/logout",Map.of());
+        boolean replay=false;try{user.call("POST","/api/v1/auth/smart-card/verify",validProof);}catch(IllegalStateException expected){replay=expected.getMessage().contains("410");}
+        check("Replayed proof rejected",replay);
+        check("Failed proof recorded despite transaction rollback",user.call("GET","/api/v1/me/smart-cards/history",null).path("data").toString().contains("FAILURE"));
+
+        var expiredChallenge=user.call("POST","/api/v1/auth/smart-card/challenge",Map.of("username","contract01","cardIdentifier",identity.identifier()));
+        byte[] expiredSignature;try(var t=card.open()){expiredSignature=new CardClient(t).sign(Base64.getDecoder().decode(expiredChallenge.path("payload").asText()),"123456".toCharArray());}
+        db.jdbc.update("UPDATE smart_card_challenge SET expires_at=? WHERE id=?",vn.kma.idp.shared.Time.format(java.time.Instant.now().minusSeconds(1)),expiredChallenge.path("challengeId").asText());
+        boolean expired=false;try{user.call("POST","/api/v1/auth/smart-card/verify",Map.of("challengeId",expiredChallenge.path("challengeId").asText(),"signature",Base64.getEncoder().encodeToString(expiredSignature)));}catch(IllegalStateException expected){expired=expected.getMessage().contains("410");}
+        check("Expired signed challenge rejected",expired);
+
+        var raceChallenge=user.call("POST","/api/v1/auth/smart-card/challenge",Map.of("username","contract01","cardIdentifier",identity.identifier()));
+        byte[] raceSignature;try(var t=card.open()){raceSignature=new CardClient(t).sign(Base64.getDecoder().decode(raceChallenge.path("payload").asText()),"123456".toCharArray());}
+        String raceBody=json.writeValueAsString(Map.of("challengeId",raceChallenge.path("challengeId").asText(),"signature",Base64.getEncoder().encodeToString(raceSignature)));
+        try(var executor=Executors.newFixedThreadPool(2)){
+            var start=new CountDownLatch(1);
+            Callable<org.springframework.mock.web.MockHttpServletResponse> task=()->{start.await();return mvc.perform(MockMvcRequestBuilders.post("/api/v1/auth/smart-card/verify").contentType("application/json").content(raceBody)).andReturn().getResponse();};
+            var first=executor.submit(task);var second=executor.submit(task);start.countDown();
+            var responses=List.of(first.get(15,TimeUnit.SECONDS),second.get(15,TimeUnit.SECONDS));
+            check("Concurrent proofs create exactly one accepted result",responses.stream().filter(r->r.getStatus()==200).count()==1&&responses.stream().filter(r->r.getStatus()==410).count()==1);
+            for(var response:responses)if(response.getStatus()==200){var session=new IdpApi("http://127.0.0.1:8080",new MvcTransport(mvc));session.session(json.readTree(response.getContentAsString()));session.call("POST","/api/v1/logout",Map.of());}
+        }
+
+
+
         check("PIN char array is cleared after successful authentication",Arrays.equals(pin,new char[pin.length]));
         check("PIN field never travels across the HTTP API",!transport.sawPinField);
-        JsonNode originalTokens=transport.lastTokens;
         user.session(json.valueToTree(Map.of("accessToken","expired-token","refreshToken",originalTokens.path("refreshToken").asText())));
         check("Real FE refresh recovers from BE bearer rejection",user.call("GET","/api/v1/me",null).path("data").path("id").asText().equals(account));
         check("Refresh request carried no expired bearer header",transport.refreshWithoutBearer);
@@ -108,13 +161,30 @@ public final class ContractFlowChecks {
         check("FE stays authenticated through signing-key overlap",admin.call("GET","/api/v1/me",null).path("data").path("id").asText().equals(adminId));
         boolean protectedActive=false;try{admin.call("DELETE","/api/v1/signing-keys/"+nextKey,null);}catch(IllegalStateException expected){protectedActive=expected.getMessage().contains("409");}
         check("FE receives domain rejection when revoking active signing key",protectedActive&&admin.hasSession());
+
+        var revocationChallenge=admin.call("POST","/api/v1/auth/smart-card/challenge",Map.of("username","contract01","cardIdentifier",identity.identifier()));
+        byte[] revokedSignature;try(var t=card.open()){revokedSignature=new CardClient(t).sign(Base64.getDecoder().decode(revocationChallenge.path("payload").asText()),"123456".toCharArray());}
+        String cardCredential=admin.call("GET","/api/v1/me/smart-cards?accountId="+account,null).path("data").get(0).path("id").asText();
+        admin.call("DELETE","/api/v1/accounts/credentials/"+cardCredential,null);
+        check("Revoked card remains visible in database",admin.call("GET","/api/v1/me/smart-cards?accountId="+account,null).path("data").get(0).path("status").asText().equals("REVOKED"));
+        boolean revokedCard=false;try{admin.call("POST","/api/v1/auth/smart-card/verify",Map.of("challengeId",revocationChallenge.path("challengeId").asText(),"signature",Base64.getEncoder().encodeToString(revokedSignature)));}catch(IllegalStateException expected){revokedCard=expected.getMessage().contains("401");}
+        check("Revoked card proof rejected even for previously issued challenge",revokedCard);
+
         admin.call("POST","/api/v1/logout",Map.of());
+    }
+    private void expect(MockMvc mvc,String method,String path,Object payload,String token,int expected)throws Exception {
+        var request=MockMvcRequestBuilders.request(HttpMethod.valueOf(method),URI.create(path)).contentType("application/json");
+        if(token!=null)request.header("Authorization","Bearer "+token);
+        if(payload!=null)request.content(json.writeValueAsString(payload));
+        var response=mvc.perform(request).andReturn().getResponse();
+        check("Validation "+method+" "+path+" -> "+expected,response.getStatus()==expected);
+        if(expected>=400){var error=json.readTree(response.getContentAsString());check("Structured safe error",error.path("code").asText().matches("[A-Z0-9_]+")&&!error.toString().contains("stackTrace")&&!error.toString().contains("secret_hash"));}
     }
     private String totp(String base32,int offset){
         var output=new ByteArrayOutputStream();int buffer=0,bits=0;for(char c:base32.toCharArray()){buffer=(buffer<<5)|"ABCDEFGHIJKLMNOPQRSTUVWXYZ234567".indexOf(c);bits+=5;if(bits>=8){bits-=8;output.write((buffer>>bits)&255);}}
         return vn.kma.idp.credential.service.TotpAlgorithm.code(output.toByteArray(),java.time.Instant.now().getEpochSecond()/30+offset,6);
     }
-    private void report()throws Exception{Path path=Path.of("target/e2e-test-results.json");Files.createDirectories(path.getParent());json.writerWithDefaultPrettyPrinter().writeValue(path.toFile(),Map.of("recordedAt",java.time.Instant.now().toString(),"backend","real Spring Security/controllers/services/repositories and H2","frontend","Java API/APDU compatibility layer: IdpApi, SmartCardAuthenticationService and CardClient; NOT React UI","simulation","HTTP transport via MockMvc; software APDU card fixture; NOT Oracle Simulator or physical card","cases",cases));}
+    private void report()throws Exception{Path path=Path.of("target/e2e-test-results.json");Files.createDirectories(path.getParent());json.writerWithDefaultPrettyPrinter().writeValue(path.toFile(),Map.of("recordedAt",java.time.Instant.now().toString(),"backend","real Spring Security/controllers/services/repositories and H2","frontend","Java API/APDU compatibility layer: IdpApi, SmartCardAuthenticationService and CardClient; NOT React UI","simulation","HTTP transport via MockMvc; production DemoCardReader APDU emulator; NOT Oracle Simulator or physical card","cases",cases));}
     private final class MvcTransport implements ApiTransport {
         private final MockMvc mvc;private JsonNode lastTokens;private boolean sawPinField,sawPrivateKeyField,refreshWithoutBearer;
         MvcTransport(MockMvc mvc){this.mvc=mvc;}
@@ -136,26 +206,5 @@ public final class ContractFlowChecks {
                 public void onComplete(){result.complete(output.toByteArray());}
             });return result.get(5,TimeUnit.SECONDS);
         }
-    }
-    private static final class SoftwareCard {
-        private final KeyPair keys;private final byte[] id=new byte[16];private int tries=5;
-        SoftwareCard()throws Exception{var gen=KeyPairGenerator.getInstance("RSA");gen.initialize(2048);keys=gen.generateKeyPair();new SecureRandom().nextBytes(id);}
-        CardTransport open(){return new CardTransport(){
-            private boolean validated;
-            public String description(){return "software APDU fixture, not Oracle Simulator";}
-            public void close(){validated=false;}
-            public ResponseAPDU transmit(CommandAPDU apdu)throws Exception {
-                if(apdu.getINS()==0xA4)return response(new byte[0],Arrays.equals(apdu.getData(),CardClient.AID)?0x9000:0x6A82);
-                return switch(apdu.getINS()){
-                    case 0x10->response(id,0x9000);
-                    case 0x20->{byte[] value=((RSAPublicKey)keys.getPublic()).getModulus().toByteArray();yield response(Arrays.copyOfRange(value,Math.max(0,value.length-256),value.length),0x9000);}
-                    case 0x21->response(((RSAPublicKey)keys.getPublic()).getPublicExponent().toByteArray(),0x9000);
-                    case 0x40->{boolean ok=tries>0&&Arrays.equals(apdu.getData(),"123456".getBytes(StandardCharsets.US_ASCII));if(ok){tries=5;validated=true;}else if(tries>0)tries--;yield response(new byte[0],ok?0x9000:0x63C0|tries);}
-                    case 0x30->{if(!validated)yield response(new byte[0],0x6982);validated=false;var signer=Signature.getInstance("SHA256withRSA");signer.initSign(keys.getPrivate());signer.update(apdu.getData());yield response(signer.sign(),0x9000);}
-                    default->response(new byte[0],0x6D00);
-                };
-            }
-        };}
-        private static ResponseAPDU response(byte[] data,int sw){byte[] bytes=Arrays.copyOf(data,data.length+2);bytes[data.length]=(byte)(sw>>8);bytes[data.length+1]=(byte)sw;return new ResponseAPDU(bytes);}
     }
 }

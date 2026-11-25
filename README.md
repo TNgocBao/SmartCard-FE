@@ -70,3 +70,7 @@ Token chỉ giữ trong bộ nhớ trang, không lưu localStorage/cookie; tải
 Dịch vụ web hỗ trợ sử dụng cục bộ. Triển khai public cần thiết kế HTTPS, origin và mô hình bridge riêng; không đổi bind address để công khai dịch vụ đọc thẻ.
 
 Hướng dẫn chi tiết: [HUONG_DAN_KHOI_DONG_FE.md](HUONG_DAN_KHOI_DONG_FE.md). Kết quả kiểm tra: [docs/TEST_CASE_RESULTS.md](docs/TEST_CASE_RESULTS.md).
+
+## Demo thẻ trên UI
+
+Chạy `run.ps1 -ApiBaseUrl http://127.0.0.1:18080 -DemoCard`. Có thẻ phần mềm không cần SDK, công cụ nạp CAP vào Oracle Simulator và PC/SC cho thiết bị thật. Xem [luồng demo, kiểm thử và giới hạn](docs/SMART_CARD_DEMO.md).

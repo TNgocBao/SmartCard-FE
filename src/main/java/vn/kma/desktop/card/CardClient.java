@@ -26,6 +26,11 @@ public final class CardClient {
             bytes=pin(pin);send(0x40,bytes,0);byte[] signature=send(0x30,challenge,256);if(signature.length!=256)throw new CardOperationException("CARD_DATA_INVALID");return signature;
         }finally{wipe(bytes);wipe(pin);}
     }
+    public void verifyPin(char[] value) throws Exception {
+        byte[] bytes=null;
+        try { bytes=pin(value);send(0x40,bytes,0); }
+        finally { wipe(bytes);wipe(value); }
+    }
     public void changePin(char[] current,char[] replacement) throws Exception {
         byte[] oldBytes=null,newBytes=null;
         try{oldBytes=pin(current);newBytes=pin(replacement);send(0x40,oldBytes,0);send(0x42,newBytes,0);}

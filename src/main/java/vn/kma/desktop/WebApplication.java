@@ -12,9 +12,16 @@ import vn.kma.desktop.card.*;
 
 /** Loopback-only web host, fixed upstream proxy and PC/SC bridge. No UI or token storage. */
 public final class WebApplication {
-    private static final ObjectMapper JSON = new ObjectMapper();
+    private static final ObjectMapper JSON = new ObjectMapper(com.fasterxml.jackson.core.JsonFactory.builder()
+        .streamReadConstraints(com.fasterxml.jackson.core.StreamReadConstraints.builder().maxNestingDepth(16).maxStringLength(262144).build())
+        .enable(com.fasterxml.jackson.core.StreamReadFeature.STRICT_DUPLICATE_DETECTION).build())
+        .enable(DeserializationFeature.FAIL_ON_TRAILING_TOKENS);
     private static final Object CARD_LOCK = new Object();
-    private static final HttpClient HTTP = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(5)).followRedirects(HttpClient.Redirect.NEVER).build();
+    private static final DemoCardReader DEMO = new DemoCardReader();
+    private static final boolean DEMO_ENABLED = "true".equalsIgnoreCase(System.getenv("IDP_DEMO_CARD"));
+    private static final class UpstreamClient {
+        private static final HttpClient HTTP = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(5)).followRedirects(HttpClient.Redirect.NEVER).build();
+    }
     private static URI backend;
     private static Path web;
     public static void main(String[] args) throws Exception {
@@ -54,6 +61,7 @@ public final class WebApplication {
             x.getResponseHeaders().set("Content-Security-Policy", "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'none'; frame-ancestors 'none'");
             byte[] bytes = Files.readAllBytes(file); x.sendResponseHeaders(200,bytes.length); x.getResponseBody().write(bytes);
         } catch (CardOperationException e) { reply(x,400,Map.of("code",e.code(),"remainingTries",e.remainingTries())); }
+        catch (com.fasterxml.jackson.core.JacksonException e) { reply(x,400,Map.of("code","VALIDATION_ERROR")); }
         catch (IllegalArgumentException e) { reply(x,400,Map.of("code","VALIDATION_ERROR")); }
         catch (Exception e) { reply(x,503,Map.of("code",x.getRequestURI().getPath().startsWith("/bridge/")?"CARD_CONNECTION_FAILED":"SERVICE_UNAVAILABLE")); }
         finally { x.close(); }
@@ -69,7 +77,7 @@ public final class WebApplication {
         var request = HttpRequest.newBuilder(target).timeout(Duration.ofSeconds(25)).header("Accept","application/json").header("Content-Type","application/json");
         String authorization = x.getRequestHeaders().getFirst("Authorization");
         if (authorization != null) request.header("Authorization",authorization);
-        var response = HTTP.send(request.method(x.getRequestMethod(),HttpRequest.BodyPublishers.ofByteArray(body(x))).build(),HttpResponse.BodyHandlers.ofInputStream());
+        var response = UpstreamClient.HTTP.send(request.method(x.getRequestMethod(),HttpRequest.BodyPublishers.ofByteArray(body(x))).build(),HttpResponse.BodyHandlers.ofInputStream());
         byte[] bytes;
         try (var stream = response.body()) { bytes = stream.readNBytes(2097153); }
         if (bytes.length>2097152) { reply(x,502,Map.of("code","RESPONSE_TOO_LARGE")); return; }
@@ -78,25 +86,67 @@ public final class WebApplication {
         else { x.sendResponseHeaders(response.statusCode(),bytes.length); x.getResponseBody().write(bytes); }
     }
     private static void card(HttpExchange x,String path) throws Exception {
-        if (path.equals("/bridge/status") && x.getRequestMethod().equals("GET")) { reply(x,200,Map.of("status","UP")); return; }
-        if (!Set.of("/bridge/card/read","/bridge/card/sign","/bridge/card/pin").contains(path)) { reply(x,404,Map.of("code","RESOURCE_NOT_FOUND")); return; }
+        if (path.equals("/bridge/status") && x.getRequestMethod().equals("GET")) { reply(x,200,Map.of("status","UP","demoEnabled",DEMO_ENABLED,"oracle",OracleAppletInstaller.status())); return; }
+        if (path.equals("/bridge/demo/status") && x.getRequestMethod().equals("GET")) {
+            if(!DEMO_ENABLED){reply(x,403,Map.of("code","DEMO_DISABLED"));return;}
+            reply(x,200,DEMO.status());return;
+        }
+        if (!Set.of("/bridge/card/read","/bridge/card/sign","/bridge/card/pin","/bridge/card/verify-pin","/bridge/oracle/install","/bridge/demo/create","/bridge/demo/install","/bridge/demo/insert","/bridge/demo/remove").contains(path)) { reply(x,404,Map.of("code","RESOURCE_NOT_FOUND")); return; }
         if (!x.getRequestMethod().equals("POST")) { reply(x,405,Map.of("code","METHOD_NOT_ALLOWED")); return; }
         JsonNode data = JSON.readTree(body(x));
         if (data == null || !data.isObject()) throw new IllegalArgumentException();
+        validateCardRequest(path,data);
+        if(path.startsWith("/bridge/demo/") || path.equals("/bridge/oracle/install")) {
+            if(!DEMO_ENABLED){reply(x,403,Map.of("code","DEMO_DISABLED"));return;}
+            synchronized(CARD_LOCK) {
+                switch(path) {
+                    case "/bridge/demo/create" -> DEMO.create();
+                    case "/bridge/demo/install" -> DEMO.install();
+                    case "/bridge/demo/insert" -> DEMO.insert(data.path("cardIdentifier").asText());
+                    case "/bridge/demo/remove" -> DEMO.remove();
+                    case "/bridge/oracle/install" -> OracleAppletInstaller.install();
+                    default -> throw new IllegalArgumentException();
+                }
+                reply(x,200,path.startsWith("/bridge/demo/")?DEMO.status():Map.of("status","INSTALLED"));return;
+            }
+        }
         String mode = data.path("transport").asText();
-        if (!Set.of("SIMULATOR","PCSC").contains(mode)) throw new IllegalArgumentException();
+        if (!Set.of("SOFTWARE","SIMULATOR","PCSC").contains(mode)) throw new IllegalArgumentException();
+        if(mode.equals("SOFTWARE")&&!DEMO_ENABLED){reply(x,403,Map.of("code","DEMO_DISABLED"));return;}
         synchronized (CARD_LOCK) {
-            try (var transport = new PcscTransport(mode.equals("SIMULATOR"),"127.0.0.1",9025)) {
+            try (var transport = mode.equals("SOFTWARE")?DEMO.open():new PcscTransport(mode.equals("SIMULATOR"),"127.0.0.1",9025)) {
                 var client = new CardClient(transport);
                 var identity = client.identity();
                 if (path.endsWith("/read")) { reply(x,200,identity); return; }
                 if (!identity.identifier().equals(data.path("cardIdentifier").asText())) throw new CardOperationException("CARD_CHANGED");
                 char[] pin = data.path("pin").asText().toCharArray();
                 try {
-                    if (path.endsWith("/sign")) reply(x,200,Map.of("signature",Base64.getEncoder().encodeToString(client.sign(Base64.getDecoder().decode(data.path("payload").asText()),pin))));
+                    if (path.endsWith("/verify-pin")) {client.verifyPin(pin);reply(x,200,Map.of("status","OK"));}
+                    else if (path.endsWith("/sign")) reply(x,200,Map.of("signature",Base64.getEncoder().encodeToString(client.sign(Base64.getDecoder().decode(data.path("payload").asText()),pin))));
                     else { client.changePin(pin,data.path("newPin").asText().toCharArray()); reply(x,200,Map.of("status","OK")); }
                 } finally { Arrays.fill(pin,'\0'); }
             }
+        }
+    }
+    private static void validateCardRequest(String path,JsonNode data) {
+        Set<String> required;
+        if(path.equals("/bridge/demo/insert"))required=Set.of("cardIdentifier");
+        else if(path.startsWith("/bridge/demo/")||path.equals("/bridge/oracle/install"))required=Set.of();
+        else if(path.endsWith("/read"))required=Set.of("transport");
+        else if(path.endsWith("/sign"))required=Set.of("transport","cardIdentifier","pin","payload");
+        else if(path.endsWith("/pin"))required=Set.of("transport","cardIdentifier","pin","newPin");
+        else required=Set.of("transport","cardIdentifier","pin");
+        var names=new HashSet<String>();data.fieldNames().forEachRemaining(names::add);
+        if(!names.equals(required))throw new IllegalArgumentException();
+        for(String name:required)if(!data.path(name).isTextual()||data.path(name).asText().isBlank())throw new IllegalArgumentException();
+        if(data.has("cardIdentifier")&&!data.path("cardIdentifier").asText().matches("[0-9A-F]{32}"))throw new IllegalArgumentException();
+        for(String field:List.of("pin","newPin"))if(data.has(field)&&!data.path(field).asText().matches("[0-9]{6,12}"))throw new CardOperationException("PIN_FORMAT_INVALID");
+        if(data.has("payload")) {
+            String text=data.path("payload").asText();
+            if(text.length()>136)throw new CardOperationException("CARD_CHALLENGE_INVALID");
+            byte[] bytes;
+            try{bytes=Base64.getDecoder().decode(text);}catch(IllegalArgumentException e){throw new CardOperationException("CARD_CHALLENGE_INVALID");}
+            if(bytes.length<32||bytes.length>100)throw new CardOperationException("CARD_CHALLENGE_INVALID");
         }
     }
     private static void reply(HttpExchange x,int status,Object data) throws java.io.IOException {

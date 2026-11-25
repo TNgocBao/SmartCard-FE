@@ -78,3 +78,15 @@ python scripts/check_card_demo.py
 ```
 
 Test tích hợp dùng Spring Security/controller/service/repository thật và H2 riêng, không sửa database MySQL hiện có. Kiểm tra handler agent dùng HttpExchange trong bộ nhớ, không phải kiểm chứng TCP/HTTP hay trình duyệt. Chạy trên môi trường cho phép loopback để kiểm tra thêm `python scripts/check_web_bridge.py` và demo UI thủ công.
+
+## Chuẩn bị Maven cache có quyền ghi
+
+Khi Maven cache người dùng bị chặn ghi, có thể sao chép các artifact hiện có vào workspace và phục hồi POM gốc được nhúng trong JAR:
+
+```powershell
+cd D:\ATBM-SYSTEM\frontend
+python scripts/prepare_maven_cache.py --destination ../backend/.cache/m2
+.\build.ps1 -MavenRepository D:/ATBM-SYSTEM/backend/.cache/m2
+```
+
+Công cụ không tải mạng, không sửa cache gốc, không thay phiên bản hoặc tự tạo POM thay thế. Artifact chưa có trên máy vẫn phải tải từ Maven Central khi kết nối được. Lần kiểm tra gần nhất còn thiếu parent POM Surefire 3.5.6 và fastdoubleparser 2.0.1, nên chưa thể đánh dấu Maven release build PASS.

@@ -1,0 +1,93 @@
+{
+  "recordedAt": "2026-11-25T15:03:08.449416+00:00",
+  "overall": "NOT_FULLY_VERIFIED",
+  "backendSourceSha256": "b5577c9ab7e1c25ba08a5c89454f3ae5869cdf60e798916f1a70020dd32a48be",
+  "frontendSourceSha256": "6b2585961908fd642bd22a47a2767faa1c8d984bc7214cdbdc8553dad85fb7d9",
+  "results": [
+    {
+      "item": "Backend Maven verify",
+      "status": "BLOCKED",
+      "reason": "Parent Boot POM recovered successfully. Remaining offline blocker: org.apache.maven.surefire:surefire:pom:3.5.6 absent."
+    },
+    {
+      "item": "Frontend Maven verify",
+      "status": "BLOCKED",
+      "reason": "Writable workspace Maven cache selected; plugin POM recovered. Remaining offline blocker: org.apache.maven.surefire:surefire:pom:3.5.6 absent."
+    },
+    {
+      "item": "Backend cached compatibility regression",
+      "status": "PASS",
+      "checks": 291,
+      "scope": "Spring Security/controllers/services/repositories and H2 via MockMvc"
+    },
+    {
+      "item": "Isolated exception contracts",
+      "status": "PASS",
+      "checks": 56
+    },
+    {
+      "item": "Java bridge client checks",
+      "status": "PASS",
+      "checks": 25
+    },
+    {
+      "item": "JavaScript API client and validation",
+      "status": "PASS",
+      "checks": 12
+    },
+    {
+      "item": "React Vite production build",
+      "status": "PASS"
+    },
+    {
+      "item": "Java Card applet CAP and installer build",
+      "status": "PASS",
+      "converterErrors": 0,
+      "converterWarnings": 0,
+      "capSha256": "0b8379a464f082ed9f1a85c5dd37b67d9da40daf02fa03dc69d553a488a6d0f9"
+    },
+    {
+      "item": "Card emulator, handler and backend contract",
+      "status": "PASS",
+      "checks": 149,
+      "scope": "Production software APDU reader + CardClient + Java API client + real Spring backend/H2. Handler tests use in-memory HttpExchange. Not Oracle, physical NFC, MySQL, actual HTTP or browser interactions."
+    },
+    {
+      "item": "Actual HTTP bridge and browser",
+      "status": "BLOCKED",
+      "reason": "Java loopback SocketException: Permission denied: connect"
+    },
+    {
+      "item": "Actual MySQL workflow",
+      "status": "BLOCKED",
+      "reason": "Docker Engine pipe dockerDesktopLinuxEngine not available; no running MySQL listener observed"
+    },
+    {
+      "item": "Oracle Simulator CAP deployment",
+      "status": "BLOCKED",
+      "reason": "D:/SmartCard/simulator/runtime/bin/jcsw.exe missing"
+    },
+    {
+      "item": "Architecture and data model audits",
+      "status": "PASS",
+      "tablesRetained": 32,
+      "entities": 41,
+      "attributeOccurrences": 897
+    },
+    {
+      "item": "Backend pinned Maven compile",
+      "status": "BLOCKED",
+      "reason": "ch.randelshofer:fastdoubleparser:jar:2.0.1 absent from available local artifacts; network unavailable"
+    }
+  ],
+  "sourceCodeChangedInThisRun": false,
+  "buildToolingChangedInThisRun": true,
+  "businessSourceChangedInThisRun": false,
+  "mavenCacheRepair": {
+    "copiedArtifacts": 1640,
+    "originalEmbeddedPomsRecovered": 432,
+    "sourceCacheModified": false,
+    "versionsSubstituted": false
+  },
+  "latestFlowRun": "76 FE-BE/H2 contract checks, 19 APDU reader checks, 54 agent checks, 12 JavaScript tests and React production build PASS"
+}

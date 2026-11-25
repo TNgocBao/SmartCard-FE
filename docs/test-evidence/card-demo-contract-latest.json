@@ -1,235 +1,235 @@
 {
-  "simulation" : "HTTP transport via MockMvc; production DemoCardReader APDU emulator; NOT Oracle Simulator or physical card",
-  "recordedAt" : "2026-11-25T14:52:52.629182800Z",
+  "recordedAt" : "2026-11-25T15:02:38.699844300Z",
   "backend" : "real Spring Security/controllers/services/repositories and H2",
   "frontend" : "Java API/APDU compatibility layer: IdpApi, SmartCardAuthenticationService and CardClient; NOT React UI",
   "cases" : [ {
-    "case" : "FE password login reaches real BE and creates admin session",
-    "passed" : true
+    "passed" : true,
+    "case" : "FE password login reaches real BE and creates admin session"
   }, {
-    "case" : "FE enrollment obtains real AAL2 admin token",
-    "passed" : true
+    "passed" : true,
+    "case" : "FE enrollment obtains real AAL2 admin token"
   }, {
-    "case" : "FE account creation executes BE transaction",
-    "passed" : true
+    "passed" : true,
+    "case" : "FE account creation executes BE transaction"
   }, {
-    "case" : "Production CardClient reads simulated APDU public key and identity",
-    "passed" : true
+    "passed" : true,
+    "case" : "Production CardClient reads simulated APDU public key and identity"
   }, {
-    "case" : "Validation POST /api/v1/auth/smart-card/challenge -> 400",
-    "passed" : true
+    "passed" : true,
+    "case" : "Validation POST /api/v1/auth/smart-card/challenge -> 400"
   }, {
-    "case" : "Structured safe error",
-    "passed" : true
+    "passed" : true,
+    "case" : "Structured safe error"
   }, {
-    "case" : "Validation POST /api/v1/auth/smart-card/challenge -> 400",
-    "passed" : true
+    "passed" : true,
+    "case" : "Validation POST /api/v1/auth/smart-card/challenge -> 400"
   }, {
-    "case" : "Structured safe error",
-    "passed" : true
+    "passed" : true,
+    "case" : "Structured safe error"
   }, {
-    "case" : "Validation POST /api/v1/auth/smart-card/challenge -> 400",
-    "passed" : true
+    "passed" : true,
+    "case" : "Validation POST /api/v1/auth/smart-card/challenge -> 400"
   }, {
-    "case" : "Structured safe error",
-    "passed" : true
+    "passed" : true,
+    "case" : "Structured safe error"
   }, {
-    "case" : "Validation POST /api/v1/auth/smart-card/challenge -> 400",
-    "passed" : true
+    "passed" : true,
+    "case" : "Validation POST /api/v1/auth/smart-card/challenge -> 400"
   }, {
-    "case" : "Structured safe error",
-    "passed" : true
+    "passed" : true,
+    "case" : "Structured safe error"
   }, {
-    "case" : "Validation POST /api/v1/auth/smart-card/challenge -> 400",
-    "passed" : true
+    "passed" : true,
+    "case" : "Validation POST /api/v1/auth/smart-card/challenge -> 400"
   }, {
-    "case" : "Structured safe error",
-    "passed" : true
+    "passed" : true,
+    "case" : "Structured safe error"
   }, {
-    "case" : "Validation POST /api/v1/auth/smart-card/verify -> 400",
-    "passed" : true
+    "passed" : true,
+    "case" : "Validation POST /api/v1/auth/smart-card/verify -> 400"
   }, {
-    "case" : "Structured safe error",
-    "passed" : true
+    "passed" : true,
+    "case" : "Structured safe error"
   }, {
-    "case" : "Validation POST /api/v1/auth/smart-card/verify -> 400",
-    "passed" : true
+    "passed" : true,
+    "case" : "Validation POST /api/v1/auth/smart-card/verify -> 400"
   }, {
-    "case" : "Structured safe error",
-    "passed" : true
+    "passed" : true,
+    "case" : "Structured safe error"
   }, {
-    "case" : "Validation POST /api/v1/auth/smart-card/verify -> 400",
-    "passed" : true
+    "passed" : true,
+    "case" : "Validation POST /api/v1/auth/smart-card/verify -> 400"
   }, {
-    "case" : "Structured safe error",
-    "passed" : true
+    "passed" : true,
+    "case" : "Structured safe error"
   }, {
-    "case" : "Validation POST /api/v1/auth/smart-card/verify -> 400",
-    "passed" : true
+    "passed" : true,
+    "case" : "Validation POST /api/v1/auth/smart-card/verify -> 400"
   }, {
-    "case" : "Structured safe error",
-    "passed" : true
+    "passed" : true,
+    "case" : "Structured safe error"
   }, {
-    "case" : "Validation POST /api/v1/auth/smart-card/verify -> 401",
-    "passed" : true
+    "passed" : true,
+    "case" : "Validation POST /api/v1/auth/smart-card/verify -> 401"
   }, {
-    "case" : "Structured safe error",
-    "passed" : true
+    "passed" : true,
+    "case" : "Structured safe error"
   }, {
-    "case" : "Validation GET /api/v1/me/smart-cards -> 401",
-    "passed" : true
+    "passed" : true,
+    "case" : "Validation GET /api/v1/me/smart-cards -> 401"
   }, {
-    "case" : "Structured safe error",
-    "passed" : true
+    "passed" : true,
+    "case" : "Structured safe error"
   }, {
-    "case" : "Validation GET /api/v1/me/smart-cards?page=-1 -> 400",
-    "passed" : true
+    "passed" : true,
+    "case" : "Validation GET /api/v1/me/smart-cards?page=-1 -> 400"
   }, {
-    "case" : "Structured safe error",
-    "passed" : true
+    "passed" : true,
+    "case" : "Structured safe error"
   }, {
-    "case" : "Validation POST /api/v1/accounts -> 400",
-    "passed" : true
+    "passed" : true,
+    "case" : "Validation POST /api/v1/accounts -> 400"
   }, {
-    "case" : "Structured safe error",
-    "passed" : true
+    "passed" : true,
+    "case" : "Structured safe error"
   }, {
-    "case" : "Validation POST /api/v1/accounts -> 400",
-    "passed" : true
+    "passed" : true,
+    "case" : "Validation POST /api/v1/accounts -> 400"
   }, {
-    "case" : "Structured safe error",
-    "passed" : true
+    "passed" : true,
+    "case" : "Structured safe error"
   }, {
-    "case" : "Validation POST /api/v1/accounts -> 400",
-    "passed" : true
+    "passed" : true,
+    "case" : "Validation POST /api/v1/accounts -> 400"
   }, {
-    "case" : "Structured safe error",
-    "passed" : true
+    "passed" : true,
+    "case" : "Structured safe error"
   }, {
-    "case" : "Validation POST /api/v1/accounts -> 400",
-    "passed" : true
+    "passed" : true,
+    "case" : "Validation POST /api/v1/accounts -> 400"
   }, {
-    "case" : "Structured safe error",
-    "passed" : true
+    "passed" : true,
+    "case" : "Structured safe error"
   }, {
-    "case" : "Validation POST /api/v1/accounts/9ebf16ac-84be-48d4-a6bc-1281bad6917a/smart-cards -> 400",
-    "passed" : true
+    "passed" : true,
+    "case" : "Validation POST /api/v1/accounts/bdce72d0-4ec5-4087-9902-d5b59fcd3242/smart-cards -> 400"
   }, {
-    "case" : "Structured safe error",
-    "passed" : true
+    "passed" : true,
+    "case" : "Structured safe error"
   }, {
-    "case" : "Validation POST /api/v1/accounts/9ebf16ac-84be-48d4-a6bc-1281bad6917a/smart-cards -> 400",
-    "passed" : true
+    "passed" : true,
+    "case" : "Validation POST /api/v1/accounts/bdce72d0-4ec5-4087-9902-d5b59fcd3242/smart-cards -> 400"
   }, {
-    "case" : "Structured safe error",
-    "passed" : true
+    "passed" : true,
+    "case" : "Structured safe error"
   }, {
-    "case" : "Validation POST /api/v1/accounts/9ebf16ac-84be-48d4-a6bc-1281bad6917a/smart-cards -> 400",
-    "passed" : true
+    "passed" : true,
+    "case" : "Validation POST /api/v1/accounts/bdce72d0-4ec5-4087-9902-d5b59fcd3242/smart-cards -> 400"
   }, {
-    "case" : "Structured safe error",
-    "passed" : true
+    "passed" : true,
+    "case" : "Structured safe error"
   }, {
-    "case" : "Validation POST /api/v1/accounts/9ebf16ac-84be-48d4-a6bc-1281bad6917a/smart-cards -> 409",
-    "passed" : true
+    "passed" : true,
+    "case" : "Validation POST /api/v1/accounts/bdce72d0-4ec5-4087-9902-d5b59fcd3242/smart-cards -> 409"
   }, {
-    "case" : "Structured safe error",
-    "passed" : true
+    "passed" : true,
+    "case" : "Structured safe error"
   }, {
-    "case" : "Duplicate registration rolls back without orphan credentials",
-    "passed" : true
+    "passed" : true,
+    "case" : "Duplicate registration rolls back without orphan credentials"
   }, {
-    "case" : "Wrong card PIN prevents FE from receiving a token",
-    "passed" : true
+    "passed" : true,
+    "case" : "Wrong card PIN prevents FE from receiving a token"
   }, {
-    "case" : "PIN char array is cleared after a failed card attempt",
-    "passed" : true
+    "passed" : true,
+    "case" : "PIN char array is cleared after a failed card attempt"
   }, {
-    "case" : "FE APDU signature is verified by real BE",
-    "passed" : true
+    "passed" : true,
+    "case" : "FE APDU signature is verified by real BE"
   }, {
-    "case" : "Card registration persisted in database",
-    "passed" : true
+    "passed" : true,
+    "case" : "Card registration persisted in database"
   }, {
-    "case" : "Software card transport is correctly persisted",
-    "passed" : true
+    "passed" : true,
+    "case" : "Software card transport is correctly persisted"
   }, {
-    "case" : "Card list excludes public key payload",
-    "passed" : true
+    "passed" : true,
+    "case" : "Card list excludes public key payload"
   }, {
-    "case" : "Card proof success recorded in database",
-    "passed" : true
+    "passed" : true,
+    "case" : "Card proof success recorded in database"
   }, {
-    "case" : "User cannot read another account card inventory",
-    "passed" : true
+    "passed" : true,
+    "case" : "User cannot read another account card inventory"
   }, {
-    "case" : "Modified signature rejected by real backend",
-    "passed" : true
+    "passed" : true,
+    "case" : "Modified signature rejected by real backend"
   }, {
-    "case" : "Replayed proof rejected",
-    "passed" : true
+    "passed" : true,
+    "case" : "Replayed proof rejected"
   }, {
-    "case" : "Failed proof recorded despite transaction rollback",
-    "passed" : true
+    "passed" : true,
+    "case" : "Failed proof recorded despite transaction rollback"
   }, {
-    "case" : "Expired signed challenge rejected",
-    "passed" : true
+    "passed" : true,
+    "case" : "Expired signed challenge rejected"
   }, {
-    "case" : "Concurrent proofs create exactly one accepted result",
-    "passed" : true
+    "passed" : true,
+    "case" : "Concurrent proofs create exactly one accepted result"
   }, {
-    "case" : "PIN char array is cleared after successful authentication",
-    "passed" : true
+    "passed" : true,
+    "case" : "PIN char array is cleared after successful authentication"
   }, {
-    "case" : "PIN field never travels across the HTTP API",
-    "passed" : true
+    "passed" : true,
+    "case" : "PIN field never travels across the HTTP API"
   }, {
-    "case" : "Real FE refresh recovers from BE bearer rejection",
-    "passed" : true
+    "passed" : true,
+    "case" : "Real FE refresh recovers from BE bearer rejection"
   }, {
-    "case" : "Refresh request carried no expired bearer header",
-    "passed" : true
+    "passed" : true,
+    "case" : "Refresh request carried no expired bearer header"
   }, {
-    "case" : "Real BE rejects management access from member FE",
-    "passed" : true
+    "passed" : true,
+    "case" : "Real BE rejects management access from member FE"
   }, {
-    "case" : "FE card service preserves MFA challenge rather than treating it as a login",
-    "passed" : true
+    "passed" : true,
+    "case" : "FE card service preserves MFA challenge rather than treating it as a login"
   }, {
-    "case" : "FE completes card plus TOTP against real BE",
-    "passed" : true
+    "passed" : true,
+    "case" : "FE completes card plus TOTP against real BE"
   }, {
-    "case" : "FE gains a permission without replacing its JWT",
-    "passed" : true
+    "passed" : true,
+    "case" : "FE gains a permission without replacing its JWT"
   }, {
-    "case" : "FE cannot turn read-only key permission into rotation",
-    "passed" : true
+    "passed" : true,
+    "case" : "FE cannot turn read-only key permission into rotation"
   }, {
-    "case" : "FE sees permission revocation while its session stays active",
-    "passed" : true
+    "passed" : true,
+    "case" : "FE sees permission revocation while its session stays active"
   }, {
-    "case" : "Lock invalidates the real FE session and refresh state",
-    "passed" : true
+    "passed" : true,
+    "case" : "Lock invalidates the real FE session and refresh state"
   }, {
-    "case" : "Unlock allows a fresh card challenge",
-    "passed" : true
+    "passed" : true,
+    "case" : "Unlock allows a fresh card challenge"
   }, {
-    "case" : "APDU private key was never exposed to an API",
-    "passed" : true
+    "passed" : true,
+    "case" : "APDU private key was never exposed to an API"
   }, {
-    "case" : "FE reads active plus NEXT public JWK",
-    "passed" : true
+    "passed" : true,
+    "case" : "FE reads active plus NEXT public JWK"
   }, {
-    "case" : "FE stays authenticated through signing-key overlap",
-    "passed" : true
+    "passed" : true,
+    "case" : "FE stays authenticated through signing-key overlap"
   }, {
-    "case" : "FE receives domain rejection when revoking active signing key",
-    "passed" : true
+    "passed" : true,
+    "case" : "FE receives domain rejection when revoking active signing key"
   }, {
-    "case" : "Revoked card remains visible in database",
-    "passed" : true
+    "passed" : true,
+    "case" : "Revoked card remains visible in database"
   }, {
-    "case" : "Revoked card proof rejected even for previously issued challenge",
-    "passed" : true
-  } ]
+    "passed" : true,
+    "case" : "Revoked card proof rejected even for previously issued challenge"
+  } ],
+  "simulation" : "HTTP transport via MockMvc; production DemoCardReader APDU emulator; NOT Oracle Simulator or physical card"
 }

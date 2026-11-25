@@ -3,6 +3,7 @@
 | Hạng mục | Kết quả | Phạm vi |
 |---|---|---|
 | React production build | PASS | Vite bundle đầy đủ với dependency đã cài |
+| Java Card CAP + installer | PASS | Build lại từ source; converter 0 lỗi, 0 cảnh báo; chưa nạp vào Oracle runtime |
 | JavaScript API client + validation form | 12/12 PASS | Refresh/logout/race/lỗi response; required, giới hạn độ dài, PIN, email, lựa chọn và PIN nhập lại |
 | Java API client | 25/25 PASS | Transport fixture, không phải HTTP thật |
 | Thẻ phần mềm / APDU | 19/19 PASS | Thẻ trắng, nạp lặp, RSA, PIN, đổi PIN, khóa PIN, rút thẻ, khóa khác nhau và redaction |
@@ -21,3 +22,7 @@
 Bằng chứng: [tổng hợp](test-evidence/card-demo-latest.json), [case FE–BE](test-evidence/card-demo-contract-latest.json), [Java bridge](test-evidence/web-bridge-latest.json).
 
 Chạy lại theo [SMART_CARD_DEMO.md](SMART_CARD_DEMO.md). Các báo cáo lưu dấu vân tay nguồn để nhận diện kết quả cũ. PIN/private key không nằm trong response quản trị hoặc báo cáo case.
+
+## Lần chạy build thực tế gần nhất
+
+Xem [real-build-latest.json](test-evidence/real-build-latest.json). Maven backend không tải được parent POM vì DNS; Maven frontend thiếu Surefire và không ghi được cache ngoài workspace. Docker Engine chưa hoạt động. HTTP loopback vẫn bị Java từ chối. Đã chạy lại 291 kiểm tra backend, 56 kiểm tra exception, 149 kiểm tra thẻ/tích hợp, 25 kiểm tra Java client, 12 kiểm tra JavaScript; React và CAP/installer build thành công. Không có thay đổi mã nghiệp vụ trong lần chạy này.
